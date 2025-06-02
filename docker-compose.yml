@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: cms_postgres
+    environment:
+      POSTGRES_USER: cms_user
+      POSTGRES_PASSWORD: cms_password
+      POSTGRES_DB: cms_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - cms_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: cms_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+    networks:
+      - cms_network
+    depends_on:
+      - postgres
+
+networks:
+  cms_network:
+    name: cms_network
+
+volumes:
+  postgres_data:
+    name: cms_postgres_data
+  pgadmin_data:
+    name: cms_pgadmin_data 
