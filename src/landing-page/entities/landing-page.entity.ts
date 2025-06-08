@@ -1,41 +1,29 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany } from 'typeorm';
+import { Hero } from './hero.entity';
+import { Service } from './service.entity';
+import { Video } from './video.entity';
+import { CompareSection } from './compare-section.entity';
+import { Brand } from './brand.entity';
 
 @Entity('landing_page')
 export class LandingPage {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('jsonb')
-  content: {
-    hero: {
-      logo: string;
-      backgroundImage: string;
-      mainTitle: string;
-    };
-    servicesCarousel: Array<{
-      id: string;
-      title: string;
-      image: string;
-      link: string;
-    }>;
-    videos: Array<{
-      id: string;
-      url: string;
-      title?: string;
-      description?: string;
-    }>;
-    compareSection: {
-      beforeImage: string;
-      afterImage: string;
-      title?: string;
-    };
-    brandsCarousel: Array<{
-      id: string;
-      name: string;
-      logo: string;
-      image: string;
-    }>;
-  };
+  @OneToOne(() => Hero, hero => hero.landingPage)
+  hero: Hero;
+
+  @OneToMany(() => Service, service => service.landingPage)
+  services: Service[];
+
+  @OneToMany(() => Video, video => video.landingPage)
+  videos: Video[];
+
+  @OneToOne(() => CompareSection, compareSection => compareSection.landingPage)
+  compareSection: CompareSection;
+
+  @OneToMany(() => Brand, brand => brand.landingPage)
+  brands: Brand[];
 
   @CreateDateColumn()
   createdAt: Date;

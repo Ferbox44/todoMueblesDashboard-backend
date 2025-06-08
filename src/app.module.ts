@@ -7,7 +7,6 @@ import { AuthModule } from './auth/auth.module';
 import { LandingPageModule } from './landing-page/landing-page.module';
 import { UploadModule } from './upload/upload.module';
 import configuration from './config/configuration';
-import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -28,7 +27,6 @@ import { FirebaseModule } from './firebase/firebase.module';
     AuthModule,
     LandingPageModule,
     UploadModule,
-    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
