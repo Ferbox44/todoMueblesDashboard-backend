@@ -7,6 +7,7 @@ import { Service } from './entities/service.entity';
 import { Video } from './entities/video.entity';
 import { CompareSection } from './entities/compare-section.entity';
 import { Brand } from './entities/brand.entity';
+import { ServiceDetail } from '../service-details/entities/service-detail.entity';
 
 @Injectable()
 export class LandingPageService {
@@ -23,6 +24,8 @@ export class LandingPageService {
     private compareSectionRepository: Repository<CompareSection>,
     @InjectRepository(Brand)
     private brandRepository: Repository<Brand>,
+    @InjectRepository(ServiceDetail)
+    private serviceDetailRepository: Repository<ServiceDetail>,
   ) {}
 
   async getContent(): Promise<any> {
@@ -115,10 +118,23 @@ export class LandingPageService {
       throw new Error('No landing page found');
     }
 
-    // Remove existing services
-    if (content.services?.length) {
-      await this.serviceRepository.remove(content.services);
+    // Get existing services
+    const existingServices = content.services || [];
+    
+    // Find services to remove (those that exist in the database but not in the new array)
+    const servicesToRemove = existingServices.filter(
+      existingService => !services.some(newService => newService.id === existingService.id)
+    );
+
+    // Remove service details first
+    for (const service of servicesToRemove) {
+      await this.serviceDetailRepository.delete({ service: { id: service.id } });
     }
+
+    // Then remove the services
+    if (servicesToRemove.length > 0) {
+      await this.serviceRepository.remove(servicesToRemove);
+  }
 
     // Create new services
     const newServices = await this.serviceRepository.save(

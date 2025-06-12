@@ -9,6 +9,7 @@ import { Video } from './entities/video.entity';
 import { CompareSection } from './entities/compare-section.entity';
 import { Brand } from './entities/brand.entity';
 import { S3Service } from './s3.service';
+import { ServiceDetail } from '../service-details/entities/service-detail.entity';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { S3Service } from './s3.service';
       Service,
       Video,
       CompareSection,
-      Brand
+      Brand,
+      ServiceDetail
     ])
   ],
   controllers: [LandingPageController],

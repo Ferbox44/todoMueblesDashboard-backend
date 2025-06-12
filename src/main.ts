@@ -8,7 +8,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api'); 
   // Enable CORS with specific configuration
   app.enableCors({
-    origin: ['http://localhost:4200', 'http://localhost:59882'], // Angular's default port
+    origin: ['http://localhost:4200', 'http://localhost:61458'], // Angular's default port
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
