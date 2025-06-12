@@ -20,4 +20,10 @@ export class UploadController {
     const images = await this.uploadService.listImages();
     return { images };
   }
+
+  @Get('videos')
+  async listVideos() {
+    const videos = await this.uploadService.listVideos();
+    return { videos };
+  }
 } 

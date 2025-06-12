@@ -25,7 +25,7 @@ export class LandingPageService {
     private brandRepository: Repository<Brand>,
   ) {}
 
-  async getContent(): Promise<LandingPage> {
+  async getContent(): Promise<any> {
     // First try to find the first landing page
     let content = await this.landingPageRepository.findOne({
       where: {}, // This will find the first record
@@ -37,26 +37,84 @@ export class LandingPageService {
       content = await this.landingPageRepository.save(new LandingPage());
     }
 
-    return content;
+    // Transform the data to match the frontend interface
+    return {
+      id: content.id,
+        content: {
+        hero: content.hero ? {
+          logo: content.hero.logo || '',
+          backgroundImage: content.hero.backgroundImage || '',
+          mainTitle: content.hero.mainTitle || ''
+        } : {
+            logo: '',
+            backgroundImage: '',
+          mainTitle: ''
+        },
+        servicesCarousel: content.services?.map(service => ({
+          id: service.id,
+          title: service.title || '',
+          image: service.image || '',
+          link: service.link || ''
+        })) || [],
+        videos: content.videos?.map(video => ({
+          id: video.id,
+          url: video.url || '',
+          title: video.title || '',
+          description: video.description || ''
+        })) || [],
+        compareSection: content.compareSection ? {
+          beforeImage: content.compareSection.beforeImage || '',
+          afterImage: content.compareSection.afterImage || '',
+          title: content.compareSection.title || ''
+        } : {
+            beforeImage: '',
+            afterImage: '',
+          title: ''
+          },
+        brandsCarousel: content.brands?.map(brand => ({
+          id: brand.id,
+          name: brand.name || '',
+          logo: brand.logo || '',
+          image: brand.image || ''
+        })) || []
+      },
+      lastUpdated: content.updatedAt
+    };
   }
 
   async updateHeroSection(heroData: Partial<Hero>): Promise<LandingPage> {
-    const content = await this.getContent();
-    
+    const content = await this.landingPageRepository.findOne({
+      where: {},
+      relations: ['hero'],
+    });
+
+    if (!content) {
+      throw new Error('No landing page found');
+    }
+
     if (content.hero) {
+      // Update existing hero
       await this.heroRepository.update(content.hero.id, heroData);
     } else {
-      const hero = await this.heroRepository.save(heroData);
-      content.hero = hero;
-      await this.landingPageRepository.save(content);
+      // Create new hero and associate it with the landing page
+      const hero = this.heroRepository.create(heroData);
+      hero.landingPage = content;
+      await this.heroRepository.save(hero);
     }
 
     return this.getContent();
   }
 
   async updateServicesCarousel(services: Partial<Service>[]): Promise<LandingPage> {
-    const content = await this.getContent();
-    
+    const content = await this.landingPageRepository.findOne({
+      where: {},
+      relations: ['services'],
+    });
+
+    if (!content) {
+      throw new Error('No landing page found');
+    }
+
     // Remove existing services
     if (content.services?.length) {
       await this.serviceRepository.remove(content.services);
@@ -79,7 +137,7 @@ export class LandingPageService {
     // Remove existing videos
     if (content.videos?.length) {
       await this.videoRepository.remove(content.videos);
-    }
+  }
 
     // Create new videos
     const newVideos = await this.videoRepository.save(
@@ -93,22 +151,40 @@ export class LandingPageService {
   }
 
   async updateCompareSection(compareData: Partial<CompareSection>): Promise<LandingPage> {
-    const content = await this.getContent();
-    
+    const content = await this.landingPageRepository.findOne({
+      where: {},
+      relations: ['compareSection'],
+    });
+
+    if (!content) {
+      throw new Error('No landing page found');
+    }
+
     if (content.compareSection) {
+      // Update existing compare section
       await this.compareSectionRepository.update(content.compareSection.id, compareData);
     } else {
-      const compareSection = await this.compareSectionRepository.save(compareData);
-      content.compareSection = compareSection;
-      await this.landingPageRepository.save(content);
+      // Create new compare section and associate it with the landing page
+      const compareSection = this.compareSectionRepository.create({
+        ...compareData,
+        landingPage: content
+      });
+      await this.compareSectionRepository.save(compareSection);
     }
 
     return this.getContent();
   }
 
-  async updateBrandsCarousel(brands: Partial<Brand>[]): Promise<LandingPage> {
-    const content = await this.getContent();
-    
+  async updateBrandsCarousel(brands: any[]): Promise<LandingPage> {
+    const content = await this.landingPageRepository.findOne({
+      where: {},
+      relations: ['brands'],
+    });
+
+    if (!content) {
+      throw new Error('No landing page found');
+    }
+
     // Remove existing brands
     if (content.brands?.length) {
       await this.brandRepository.remove(content.brands);
@@ -116,7 +192,12 @@ export class LandingPageService {
 
     // Create new brands
     const newBrands = await this.brandRepository.save(
-      brands.map(brand => ({ ...brand, landingPage: content }))
+      brands.map(brand => ({
+        name: brand.name,
+        logo: brand.logo || brand.image,
+        image: brand.image,
+        landingPage: content
+      }))
     );
     
     content.brands = newBrands;

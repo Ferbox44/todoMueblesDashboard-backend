@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, UploadedFile, Patch, Put } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LandingPageService } from './landing-page.service';
 import { S3Service } from './s3.service';

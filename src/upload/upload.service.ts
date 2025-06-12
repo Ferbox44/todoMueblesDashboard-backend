@@ -75,10 +75,34 @@ export class UploadService {
     const response = await this.s3Client.send(command);
     const region = this.configService.get<string>('AWS_REGION');
 
-    return (response.Contents || []).map(item => ({
-      key: item.Key!,
-      url: `https://${bucketName}.s3.${region}.amazonaws.com/${item.Key}`
-    }));
+    return (response.Contents || [])
+      .filter(item => item.Key?.match(/\.(jpg|jpeg|png|gif|webp)$/i))
+      .map(item => ({
+        key: item.Key!,
+        url: `https://${bucketName}.s3.${region}.amazonaws.com/${item.Key}`
+      }));
+  }
+
+  async listVideos(): Promise<{ url: string; key: string }[]> {
+    const bucketName = this.configService.get<string>('AWS_S3_BUCKET_NAME');
+    if (!bucketName) {
+      throw new Error('AWS S3 bucket name is not configured');
+    }
+
+    const command = new ListObjectsV2Command({
+      Bucket: bucketName,
+      Prefix: 'uploads/',
+    });
+
+    const response = await this.s3Client.send(command);
+    const region = this.configService.get<string>('AWS_REGION');
+
+    return (response.Contents || [])
+      .filter(item => item.Key?.match(/\.(mp4|webm|mov)$/i))
+      .map(item => ({
+        key: item.Key!,
+        url: `https://${bucketName}.s3.${region}.amazonaws.com/${item.Key}`
+      }));
   }
 
   async getSignedUrl(key: string): Promise<string> {
