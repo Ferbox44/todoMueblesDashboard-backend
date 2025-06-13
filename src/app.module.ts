@@ -8,6 +8,7 @@ import { LandingPageModule } from './landing-page/landing-page.module';
 import { UploadModule } from './upload/upload.module';
 import configuration from './config/configuration';
 import { ServiceDetailsModule } from './service-details/service-details.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ServiceDetailsModule } from './service-details/service-details.module';
     LandingPageModule,
     UploadModule,
     ServiceDetailsModule,
+    AppointmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

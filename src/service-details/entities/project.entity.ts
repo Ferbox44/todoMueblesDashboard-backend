@@ -16,7 +16,10 @@ export class Project {
   @Column()
   image: string;
 
-  @ManyToOne(() => ServiceDetail, serviceDetail => serviceDetail.projects)
+  @ManyToOne(() => ServiceDetail, serviceDetail => serviceDetail.projects, {
+    onDelete: 'CASCADE',
+    nullable: false
+  })
   @JoinColumn()
   serviceDetail: ServiceDetail;
 

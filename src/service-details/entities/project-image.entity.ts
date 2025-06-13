@@ -15,7 +15,9 @@ export class ProjectImage {
   @Column()
   title: string;
 
-  @ManyToOne(() => Project, project => project.images)
+  @ManyToOne(() => Project, project => project.images, {
+    onDelete: 'CASCADE'
+  })
   @JoinColumn()
   project: Project;
 } 

@@ -16,7 +16,9 @@ export class ServiceDetail {
   @Column()
   backgroundImage: string;
 
-  @OneToOne(() => Service)
+  @OneToOne(() => Service, {
+    onDelete: 'CASCADE'
+  })
   @JoinColumn()
   service: Service;
 
