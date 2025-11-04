@@ -16,10 +16,10 @@ export async function createTestUser(dataSource: DataSource) {
   }
 
   // Create new user
-  const hashedPassword = await bcrypt.hash('PWEJ8Y-2025', 10);
+  const hashedPassword = await bcrypt.hash('123456', 10);
   const user = userRepository.create({
-    email: 'cristabel@itdurango.com',
-    name: 'Cristabel',
+    email: 'fernando@gmail.com',
+    name: 'Fernando',
     password: hashedPassword
   });
 

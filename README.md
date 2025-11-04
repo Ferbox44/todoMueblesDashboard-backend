@@ -1,98 +1,252 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# TodoMuebles Dashboard Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend API for the TodoMuebles Dashboard built with NestJS, TypeScript, and PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+Note: This backend project is intended to work with it's frontend project:
 
 ```bash
-$ npm install
+
 ```
 
-## Compile and run the project
+## 📋 Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
+- [API Endpoints](#api-endpoints)
+- [Project Structure](#project-structure)
+- [Testing](#testing)
+- [Scripts](#scripts)
+
+## ✨ Features
+
+- 🔐 JWT-based authentication and authorization
+- 📄 Landing page content management
+- 📤 File upload with AWS S3 integration
+- 🎯 Service details management
+- 📅 Appointments management
+- 🗄️ PostgreSQL database with TypeORM
+- ✅ Input validation with class-validator
+- 🔒 CORS configuration for frontend integration
+
+## 🛠 Tech Stack
+
+- **Framework**: NestJS 11.x
+- **Language**: TypeScript 5.7
+- **Database**: PostgreSQL with TypeORM
+- **Authentication**: JWT (Passport.js)
+- **File Storage**: AWS S3
+- **Validation**: class-validator, class-transformer
+- **Testing**: Jest
+
+## 📦 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (v18 or higher)
+- npm or yarn
+- PostgreSQL (or use Docker Compose)
+- AWS Account with S3 bucket (for file uploads)
+- Docker and Docker Compose (optional, for database setup)
+
+## 🚀 Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd backend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Create a `.env` file in the root directory (see [Configuration](#configuration) section)
+
+## ⚙️ Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Application
+PORT=3001
+NODE_ENV=development
+
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=cms_user
+DB_PASSWORD=cms_password
+DB_DATABASE=cms_db
+
+# AWS S3
+AWS_REGION=us-east-2
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_S3_BUCKET_NAME=your_bucket_name
+
+# JWT
+JWT_SECRET=your-super-secret-key-change-this-in-production
+JWT_EXPIRATION=12h
+```
+
+> ⚠️ **Important**: Update the `JWT_SECRET` and AWS credentials with your own values. Never commit `.env` files to version control.
+
+## 🗄️ Database Setup
+
+### Using Docker Compose (Recommended)
+
+The project includes a `docker-compose.yml` file for easy database setup:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker-compose up -d
 ```
 
-## Run tests
+This will start:
+- PostgreSQL database on port `5432`
+- pgAdmin on port `5050` (email: `admin@admin.com`, password: `admin`)
+
+### Manual Setup
+
+1. Create a PostgreSQL database:
+```sql
+CREATE DATABASE cms_db;
+CREATE USER cms_user WITH PASSWORD 'cms_password';
+GRANT ALL PRIVILEGES ON DATABASE cms_db TO cms_user;
+```
+
+2. The database schema will be automatically synchronized in development mode.
+
+### Database Seeding
+
+To seed the database with initial data:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run seed
 ```
 
-## Deployment
+## 🏃 Running the Application
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Development Mode
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The application will start on `http://localhost:3001` with hot-reload enabled.
 
-## Resources
+### Production Mode
 
-Check out a few resources that may come in handy when working with NestJS:
+1. Build the application:
+```bash
+npm run build
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+2. Start the application:
+```bash
+npm run start:prod
+```
 
-## Support
+### Debug Mode
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run start:debug
+```
 
-## Stay in touch
+## 📡 API Endpoints
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+The API is available at `/api` prefix. Main endpoints include:
 
-## License
+- **Authentication**: `/api/auth/*`
+- **Landing Page**: `/api/landing-page/*`
+- **Upload**: `/api/upload/*`
+- **Service Details**: `/api/service-details/*`
+- **Appointments**: `/api/appointments/*`
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### CORS Configuration
+
+The API is configured to accept requests from:
+- `http://localhost:4200` (Angular default port)
+- `http://localhost:53862` (Angular alternative port)
+
+## 📁 Project Structure
+
+```
+backend/
+├── src/
+│   ├── auth/              # Authentication module
+│   ├── landing-page/      # Landing page content management
+│   ├── upload/            # File upload module
+│   ├── service-details/   # Service details management
+│   ├── appointments/      # Appointments management
+│   ├── users/             # User entities and related code
+│   ├── database/          # Database seeds and migrations
+│   ├── config/            # Configuration files
+│   ├── app.module.ts      # Root module
+│   └── main.ts            # Application entry point
+├── test/                  # E2E tests
+├── docker-compose.yml     # Docker Compose configuration
+├── package.json           # Dependencies and scripts
+└── README.md              # This file
+```
+
+## 🧪 Testing
+
+### Unit Tests
+
+```bash
+npm run test
+```
+
+### Watch Mode
+
+```bash
+npm run test:watch
+```
+
+### Coverage
+
+```bash
+npm run test:cov
+```
+
+### E2E Tests
+
+```bash
+npm run test:e2e
+```
+
+## 📜 Scripts
+
+- `npm run build` - Build the application
+- `npm run start` - Start the application
+- `npm run start:dev` - Start in development mode with hot-reload
+- `npm run start:debug` - Start in debug mode
+- `npm run start:prod` - Start in production mode
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
+- `npm run test` - Run unit tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:cov` - Run tests with coverage
+- `npm run test:e2e` - Run E2E tests
+- `npm run seed` - Seed the database
+
+## 🔒 Security Notes
+
+- Always use strong, unique `JWT_SECRET` values in production
+- Keep AWS credentials secure and never commit them
+- Set `NODE_ENV=production` in production environments
+- Database synchronization is disabled in production mode
+
+## 📝 License
+
+MIT License
+
+## 👥 Author
+
+Fernando Gomez
